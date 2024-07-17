@@ -11,7 +11,7 @@ const CallOverview: React.FC<{ activity: ActivityWithCounts }> = ({
   const answered = activity.call_type === "answered";
 
   return (
-    <div className="flex min-w-72 px-4 py-2 border rounded-xl shadow-sm">
+    <div className="flex min-w-96 px-4 py-2 border rounded-xl shadow-sm">
       <PhoneIcon activity={activity} />
       <div
         className="text-sm font-bold text-gray-900
