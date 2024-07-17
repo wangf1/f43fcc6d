@@ -40,7 +40,7 @@ export default function Navbar() {
                   transition-colors duration-300 ease-in-out
                   relative`,
                 {
-                  "after:absolute after:left-0 after:bottom-[-2px] after:w-full after:h-[2px] after:bg-red-500":
+                  "after:absolute after:left-[20%] after:bottom-[-2px] after:w-[60%] after:h-[4px] after:bg-red-500":
                     pathname === link.href, // Underline with red color and spacing
                 }
               )}
