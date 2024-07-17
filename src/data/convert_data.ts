@@ -5,9 +5,7 @@ interface CallCounts {
   activity: Activity;
 }
 
-export function getLatestCallsWithCounts(
-  calls: Activity[]
-): ActivityWithCounts[] {
+function getLatestCallsWithCounts(calls: Activity[]): ActivityWithCounts[] {
   const latestCallsMap = new Map<string, CallCounts>();
 
   for (const call of calls) {
@@ -28,8 +26,48 @@ export function getLatestCallsWithCounts(
     }
   }
 
-  return Array.from(latestCallsMap.values()).map(({ activity, count }) => ({
-    ...activity,
-    calls_count: count,
-  }));
+  const unsorted = Array.from(latestCallsMap.values()).map(
+    ({ activity, count }) => ({
+      ...activity,
+      calls_count: count,
+    })
+  );
+
+  return unsorted;
+}
+
+function formatDateWithoutTime(dateString: string): string {
+  const date = new Date(dateString);
+  return date.toISOString().split("T")[0];
+}
+
+export function getLatestCallsWithCountsGroupByDate(
+  calls: Activity[]
+): [string, ActivityWithCounts[]][] {
+  const activitiesWithCounts = getLatestCallsWithCounts(calls);
+
+  const groupedByDateMap = new Map<string, ActivityWithCounts[]>();
+
+  for (const activity of activitiesWithCounts) {
+    const dateWithoutTime = formatDateWithoutTime(activity.created_at);
+
+    if (!groupedByDateMap.has(dateWithoutTime)) {
+      groupedByDateMap.set(dateWithoutTime, []);
+    }
+
+    groupedByDateMap.get(dateWithoutTime)!.push(activity);
+  }
+
+  for (const [date, activities] of groupedByDateMap) {
+    activities.sort(
+      (a, b) =>
+        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+    );
+  }
+
+  const sortedEntries = Array.from(groupedByDateMap.entries()).sort(
+    ([dateA], [dateB]) => new Date(dateB).getTime() - new Date(dateA).getTime()
+  );
+
+  return sortedEntries;
 }
