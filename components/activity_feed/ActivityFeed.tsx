@@ -1,6 +1,6 @@
 // src/components/CallActivity.js
 import CallsWithinDate from "@/components/calls/CallsGroupedByDate";
-import { getLatestCallsWithCountsGroupByDate } from "@/src/data/convert_data";
+import { getLatestCallsWithCountsGroupByDate } from "@/src/data/process_data";
 import { calls } from "@/src/data/sample_data";
 import { Archive } from "lucide-react";
 

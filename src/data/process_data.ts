@@ -71,3 +71,7 @@ export function getLatestCallsWithCountsGroupByDate(
 
   return sortedEntries;
 }
+
+export function getMissedCallCount(calls: Activity[]): number {
+  return calls.filter((call) => call.call_type === "missed").length;
+}
