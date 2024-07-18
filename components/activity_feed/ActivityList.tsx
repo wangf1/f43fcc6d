@@ -78,7 +78,7 @@ const ActivityList: React.FC<ActivityListProps> = ({ includingArchived }) => {
     focus:outline-none focus:border-blue-300
     ${
       buttonDisabled
-        ? "text-gray-700 bg-gray-200 cursor-not-allowed"
+        ? "text-gray-700 bg-gray-200"
         : "text-gray-700 hover:bg-blue-500 hover:text-white"
     }`}
         >
