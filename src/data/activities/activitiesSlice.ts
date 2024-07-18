@@ -56,6 +56,10 @@ const activitiesSlice = createSlice({
         if (existingCallIndex !== -1) {
           state.activities[existingCallIndex] = updatedActivity;
         }
+
+        // TODO : due to limitation of no batch API to update multiple records,
+        // toast actually shows multiple times. Need to figure out how to fix it.
+        // Maybe must create a batch update API?
         const toastMessage = is_archived
           ? "All calls are archived. You can see archived calls in All calls tab."
           : "All calls are unarchived. Now you can see unarchived calls in Inbox tab.";

@@ -1,7 +1,6 @@
 "use client";
 
 import CallsWithinDate from "@/components/calls/CallsGroupedByDate";
-import { useToast } from "@/components/ui/use-toast";
 import {
   fetchActivities,
   updateActivity,
@@ -18,8 +17,6 @@ interface ActivityListProps {
 }
 
 const ActivityList: React.FC<ActivityListProps> = ({ includingArchived }) => {
-  const { toast } = useToast();
-
   const isInAllCallsPage = includingArchived;
 
   const activities = useAppSelector(
@@ -29,6 +26,8 @@ const ActivityList: React.FC<ActivityListProps> = ({ includingArchived }) => {
   const [activitiesGroupByDate, setActivitiesGroupByDate] = useState<
     [string, ActivityWithCounts[]][]
   >([]);
+
+  const [buttonDisabled, setButtonDisabled] = useState(false);
 
   const status = useAppSelector((state: RootState) => state.activities.status);
   const dispatch = useAppDispatch();
@@ -43,7 +42,10 @@ const ActivityList: React.FC<ActivityListProps> = ({ includingArchived }) => {
       includingArchived
     );
     setActivitiesGroupByDate(groupedByDate);
-  }, [activities, includingArchived]);
+
+    const btnDisabled = !isInAllCallsPage && groupedByDate.length === 0;
+    setButtonDisabled(btnDisabled);
+  }, [activities, includingArchived, isInAllCallsPage]);
 
   if (status === "loading") {
     return <p>Loading activities...</p>;
@@ -70,10 +72,15 @@ const ActivityList: React.FC<ActivityListProps> = ({ includingArchived }) => {
         space-x-4"
       >
         <button
+          disabled={buttonDisabled}
           onClick={() => onArchiveOrUnarchiveAll()}
-          className="flex items-center space-x-3 font-semibold
-            text-gray-700 px-4 py-2  rounded-md hover:bg-blue-500
-            hover:text-white focus:outline-none focus:border-blue-300"
+          className={`flex items-center space-x-3 font-semibold px-4 py-2 rounded-md 
+    focus:outline-none focus:border-blue-300
+    ${
+      buttonDisabled
+        ? "text-gray-700 bg-gray-200 cursor-not-allowed"
+        : "text-gray-700 hover:bg-blue-500 hover:text-white"
+    }`}
         >
           <Archive size={24} className="text-gray-500" />
           <div>
