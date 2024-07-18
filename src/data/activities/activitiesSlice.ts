@@ -1,3 +1,4 @@
+import { toast } from "@/components/ui/use-toast";
 import { Activity } from "@/src/types/activity";
 import { ActivitiesState } from "@/src/types/activity_state";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
@@ -55,6 +56,14 @@ const activitiesSlice = createSlice({
         if (existingCallIndex !== -1) {
           state.activities[existingCallIndex] = updatedActivity;
         }
+        const toastMessage = is_archived
+          ? "All calls are archived. You can see archived calls in All calls tab."
+          : "All calls are unarchived. Now you can see unarchived calls in Inbox tab.";
+        toast({
+          title: "Information",
+          description: toastMessage,
+          duration: 5000,
+        });
       })
       .addCase(updateActivity.rejected, (state, action) => {
         // TODO: handle error

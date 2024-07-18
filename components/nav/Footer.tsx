@@ -24,7 +24,7 @@ export default function Footer() {
   }, [activities]);
 
   if (status === "loading") {
-    return <p>Loading activities...</p>;
+    return null;
   }
 
   if (status === "failed") {

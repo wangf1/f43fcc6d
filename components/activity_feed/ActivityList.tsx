@@ -61,15 +61,6 @@ const ActivityList: React.FC<ActivityListProps> = ({ includingArchived }) => {
     for (const activity of activities) {
       dispatch(updateActivity({ activity, is_archived: isArchived }));
     }
-
-    const toastMessage = isInAllCallsPage
-      ? "All calls are unarchived. Now you can see unarchived calls in Inbox tab."
-      : "All calls are archived. You can see archived calls in All calls tab.";
-    toast({
-      title: "Information",
-      description: toastMessage,
-      duration: 5000,
-    });
   }
 
   return (
