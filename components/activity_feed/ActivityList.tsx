@@ -1,6 +1,7 @@
 "use client";
 
 import CallsWithinDate from "@/components/calls/CallsGroupedByDate";
+import { useToast } from "@/components/ui/use-toast";
 import {
   fetchActivities,
   updateActivity,
@@ -17,6 +18,8 @@ interface ActivityListProps {
 }
 
 const ActivityList: React.FC<ActivityListProps> = ({ includingArchived }) => {
+  const { toast } = useToast();
+
   const isInAllCallsPage = includingArchived;
 
   const activities = useAppSelector(
@@ -58,6 +61,15 @@ const ActivityList: React.FC<ActivityListProps> = ({ includingArchived }) => {
     for (const activity of activities) {
       dispatch(updateActivity({ activity, is_archived: isArchived }));
     }
+
+    const toastMessage = isInAllCallsPage
+      ? "All calls are unarchived. Now you can see unarchived calls in Inbox tab."
+      : "All calls are archived. You can see archived calls in All calls tab.";
+    toast({
+      title: "Information",
+      description: toastMessage,
+      duration: 5000,
+    });
   }
 
   return (
@@ -80,7 +92,7 @@ const ActivityList: React.FC<ActivityListProps> = ({ includingArchived }) => {
       </header>
       <div className="space-y-4">
         {activitiesGroupByDate.length === 0 ? (
-          <p className="max-w-96 text-gray-500">
+          <p className="max-w-96 text-gray-400">
             All calls are archived. See all calls including archived ones in the
             All calls tab.
           </p>

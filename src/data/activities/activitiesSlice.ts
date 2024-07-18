@@ -20,13 +20,13 @@ const fetchActivities = createAsyncThunk<Activity[], void>(
 );
 
 const updateActivity = createAsyncThunk<
-  Activity,
+  [Activity, boolean], // Tuple return type: activity and is_archived
   { activity: Activity; is_archived: boolean }
 >("activities/updateActivity", async ({ activity, is_archived }) => {
-  const response = await axios.patch<Activity>(`${BASE_URL}/${activity.id}`, {
+  await axios.patch<Activity>(`${BASE_URL}/${activity.id}`, {
     is_archived,
   });
-  return activity;
+  return [activity, is_archived];
 });
 
 // Create the slice
@@ -47,8 +47,8 @@ const activitiesSlice = createSlice({
         state.status = "failed";
       })
       .addCase(updateActivity.fulfilled, (state, action) => {
-        const oldUpdatedActivity = action.payload;
-        const updatedActivity = { ...oldUpdatedActivity, is_archived: true };
+        const [oldActivity, is_archived] = action.payload;
+        const updatedActivity = { ...oldActivity, is_archived: is_archived };
         const existingCallIndex = state.activities.findIndex(
           (activity) => activity.id === updatedActivity.id
         );
