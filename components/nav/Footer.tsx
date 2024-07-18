@@ -1,11 +1,31 @@
+"use client";
+
 import { Phone, Settings, UserRound } from "lucide-react";
 import { MdDialpad } from "react-icons/md";
 
+import { fetchActivities } from "@/src/data/activities/activitiesSlice";
+import { useAppDispatch, useAppSelector } from "@/src/data/hooks";
 import { getMissedCallCount } from "@/src/data/process_data";
-import { calls } from "@/src/data/sample_data";
+import { useEffect } from "react";
 
 export default function Footer() {
-  const missedCallCount = getMissedCallCount(calls);
+  const activities = useAppSelector((state) => state.activities.activities);
+  const status = useAppSelector((state) => state.activities.status);
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    dispatch(fetchActivities());
+  }, [dispatch]);
+
+  if (status === "loading") {
+    return <p>Loading activities...</p>;
+  }
+
+  if (status === "failed") {
+    return <p>Failed to load activities.</p>;
+  }
+
+  const missedCallCount = getMissedCallCount(activities, false);
 
   return (
     <div className="flex items-center justify-center p-4 space-x-6">

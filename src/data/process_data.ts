@@ -5,11 +5,19 @@ interface CallCounts {
   activity: Activity;
 }
 
-function getLatestCallsWithCounts(calls: Activity[]): ActivityWithCounts[] {
+function getLatestCallsWithCounts(
+  calls: Activity[],
+  includingArchived: boolean
+): ActivityWithCounts[] {
   const latestCallsMap = new Map<string, CallCounts>();
 
   for (const call of calls) {
-    const { direction, from, to, created_at } = call;
+    const { direction, from, to, created_at, is_archived } = call;
+
+    if (!includingArchived && is_archived) {
+      continue;
+    }
+
     const key = direction === "inbound" ? `${to}_${from}` : `${from}_${to}`;
     const existingCall = latestCallsMap.get(key);
     const isNewer =
@@ -42,9 +50,13 @@ function formatDateWithoutTime(dateString: string): string {
 }
 
 export function getLatestCallsWithCountsGroupByDate(
-  calls: Activity[]
+  calls: Activity[],
+  includingArchived: boolean
 ): [string, ActivityWithCounts[]][] {
-  const activitiesWithCounts = getLatestCallsWithCounts(calls);
+  const activitiesWithCounts = getLatestCallsWithCounts(
+    calls,
+    includingArchived
+  );
 
   const groupedByDateMap = new Map<string, ActivityWithCounts[]>();
 
@@ -72,6 +84,13 @@ export function getLatestCallsWithCountsGroupByDate(
   return sortedEntries;
 }
 
-export function getMissedCallCount(calls: Activity[]): number {
-  return calls.filter((call) => call.call_type === "missed").length;
+export function getMissedCallCount(
+  activities: Activity[],
+  includingArchived: boolean
+): number {
+  let activeActivities = activities;
+  if (!includingArchived) {
+    activeActivities = activities.filter((call) => !call.is_archived);
+  }
+  return activeActivities.filter((call) => call.call_type === "missed").length;
 }

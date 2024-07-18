@@ -9,15 +9,25 @@ const initialState: ActivitiesState = {
   status: "idle",
 };
 
+const BASE_URL = "https://aircall-backend.onrender.com/activities";
+
 const fetchActivities = createAsyncThunk<Activity[], void>(
   "activities/fetchActivities",
   async () => {
-    const response = await axios.get<Activity[]>(
-      "https://aircall-backend.onrender.com/activities"
-    );
+    const response = await axios.get<Activity[]>(BASE_URL);
     return response.data as Activity[];
   }
 );
+
+const updateActivity = createAsyncThunk<
+  Activity,
+  { id: string; is_archived: boolean }
+>("activities/updateActivity", async ({ id, is_archived }) => {
+  const response = await axios.patch<Activity>(`${BASE_URL}/${id}`, {
+    is_archived,
+  });
+  return response.data;
+});
 
 // Create the slice
 const activitiesSlice = createSlice({
@@ -35,9 +45,21 @@ const activitiesSlice = createSlice({
       })
       .addCase(fetchActivities.rejected, (state) => {
         state.status = "failed";
+      })
+      .addCase(updateActivity.fulfilled, (state, action) => {
+        const updatedCall = action.payload;
+        const existingCallIndex = state.activities.findIndex(
+          (activity) => activity.id === updatedCall.id
+        );
+        if (existingCallIndex !== -1) {
+          state.activities[existingCallIndex] = updatedCall;
+        }
+      })
+      .addCase(updateActivity.rejected, (state, action) => {
+        // TODO: handle error
       });
   },
 });
 
-export { fetchActivities };
+export { fetchActivities, updateActivity };
 export default activitiesSlice.reducer;
