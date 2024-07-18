@@ -1,6 +1,7 @@
 "use client";
 
 import CallsWithinDate from "@/components/calls/CallsGroupedByDate";
+import { Button } from "@/components/ui/button";
 import {
   fetchActivities,
   updateActivity,
@@ -71,22 +72,23 @@ const ActivityList: React.FC<ActivityListProps> = ({ includingArchived }) => {
         className="flex justify-items-start items-center mb-4
         space-x-4"
       >
-        <button
+        <Button
+          variant="ghost"
           disabled={buttonDisabled}
           onClick={() => onArchiveOrUnarchiveAll()}
           className={`flex items-center space-x-3 font-semibold px-4 py-2 rounded-md 
-    focus:outline-none focus:border-blue-300
+    focus:outline-none focus:border-blue-300 active:bg-gray-500
     ${
       buttonDisabled
         ? "text-gray-700 bg-gray-200"
-        : "text-gray-700 hover:bg-blue-500 hover:text-white"
+        : "text-gray-700 hover:bg-blue-500 hover:text-white transition-colors duration-300"
     }`}
         >
           <Archive size={24} className="text-gray-500" />
           <div>
             {isInAllCallsPage ? "Unarchive all calls" : "Archive all calls"}
           </div>
-        </button>
+        </Button>
       </header>
       <div className="space-y-4">
         {activitiesGroupByDate.length === 0 ? (
