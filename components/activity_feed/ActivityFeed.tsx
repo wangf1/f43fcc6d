@@ -1,12 +1,34 @@
-// src/components/CallActivity.js
-import CallsWithinDate from "@/components/calls/CallsGroupedByDate";
-import { getLatestCallsWithCountsGroupByDate } from "@/src/data/process_data";
-import { calls } from "@/src/data/sample_data";
-import { Archive } from "lucide-react";
+"use client";
 
-const callsGroupByDate = getLatestCallsWithCountsGroupByDate(calls);
+import CallsWithinDate from "@/components/calls/CallsGroupedByDate";
+import { fetchActivities } from "@/src/data/activities/activitiesSlice";
+import { getLatestCallsWithCountsGroupByDate } from "@/src/data/process_data";
+import { AppDispatch, RootState } from "@/src/data/store";
+import { Archive } from "lucide-react";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 const ActivityFeed = () => {
+  const activities = useSelector(
+    (state: RootState) => state.activities.activities
+  );
+  const status = useSelector((state: RootState) => state.activities.status);
+  const dispatch = useDispatch<AppDispatch>();
+
+  useEffect(() => {
+    dispatch(fetchActivities());
+  }, [dispatch]);
+
+  if (status === "loading") {
+    return <p>Loading activities...</p>;
+  }
+
+  if (status === "failed") {
+    return <p>Failed to load activities.</p>;
+  }
+
+  const callsGroupByDate = getLatestCallsWithCountsGroupByDate(activities);
+
   return (
     <div className="mx-auto shadow rounded-lg">
       <header

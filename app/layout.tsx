@@ -1,3 +1,4 @@
+import StoreProvider from "@/app/StoreProvider";
 import Footer from "@/components/nav/Footer";
 import Navbar from "@/components/nav/Navbar";
 import type { Metadata } from "next";
@@ -17,12 +18,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={inter.className}>
-        <Navbar />
-        {children}
-        <Footer />
-      </body>
-    </html>
+    <StoreProvider>
+      <html lang="en">
+        <body className={inter.className}>
+          <Navbar />
+          {children}
+          <Footer />
+        </body>
+      </html>
+    </StoreProvider>
   );
 }
