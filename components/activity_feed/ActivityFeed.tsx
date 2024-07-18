@@ -53,14 +53,16 @@ const ActivityFeed = () => {
   }
 
   return (
-    <div className="mx-auto shadow rounded-lg">
+    <div className="mx-auto min-w-96 shadow rounded-lg">
       <header
         className="flex justify-items-start items-center mb-4
         space-x-4"
       >
         <button
           onClick={() => onArchiveAll()}
-          className="flex space-x-3 font-semibold text-gray-700"
+          className="flex items-center space-x-3 font-semibold
+            text-gray-700 px-4 py-2  rounded-md hover:bg-blue-500
+            hover:text-white focus:outline-none focus:border-blue-300"
         >
           <Archive size={24} className="text-gray-500" />
           <div>Archive all calls</div>
