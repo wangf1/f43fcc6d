@@ -1,6 +1,6 @@
 "use client";
 import { cn } from "@/lib/utils";
-import { Phone } from "lucide-react";
+import { AlignHorizontalDistributeCenterIcon, Phone } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -21,7 +21,7 @@ export default function Navbar() {
         >
           <div
             className="flex items-center justify-center w-12 h-12 
-              border-4border-green-500 rounded-full text-green-500"
+              border-4 border-green-500 rounded-full text-green-500"
           >
             <Phone size={24} />
           </div>
@@ -45,10 +45,21 @@ export default function Navbar() {
                 }
               )}
             >
-              <p className="md:block">{link.name}</p>
+              <p
+                className={cn(
+                  "md:block",
+                  {
+                    "text-gray-500": pathname !== link.href,
+                  },
+                  { "font-semibold": pathname === link.href }
+                )}
+              >
+                {link.name}
+              </p>
             </Link>
           );
         })}
+        <AlignHorizontalDistributeCenterIcon size={24} />
       </div>
     </nav>
   );
