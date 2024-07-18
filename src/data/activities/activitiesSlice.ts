@@ -21,12 +21,12 @@ const fetchActivities = createAsyncThunk<Activity[], void>(
 
 const updateActivity = createAsyncThunk<
   Activity,
-  { id: string; is_archived: boolean }
->("activities/updateActivity", async ({ id, is_archived }) => {
-  const response = await axios.patch<Activity>(`${BASE_URL}/${id}`, {
+  { activity: Activity; is_archived: boolean }
+>("activities/updateActivity", async ({ activity, is_archived }) => {
+  const response = await axios.patch<Activity>(`${BASE_URL}/${activity.id}`, {
     is_archived,
   });
-  return response.data;
+  return activity;
 });
 
 // Create the slice
@@ -47,16 +47,18 @@ const activitiesSlice = createSlice({
         state.status = "failed";
       })
       .addCase(updateActivity.fulfilled, (state, action) => {
-        const updatedCall = action.payload;
+        const oldUpdatedActivity = action.payload;
+        const updatedActivity = { ...oldUpdatedActivity, is_archived: true };
         const existingCallIndex = state.activities.findIndex(
-          (activity) => activity.id === updatedCall.id
+          (activity) => activity.id === updatedActivity.id
         );
         if (existingCallIndex !== -1) {
-          state.activities[existingCallIndex] = updatedCall;
+          state.activities[existingCallIndex] = updatedActivity;
         }
       })
       .addCase(updateActivity.rejected, (state, action) => {
         // TODO: handle error
+        console.log(action.error);
       });
   },
 });

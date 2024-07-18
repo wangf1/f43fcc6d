@@ -1,24 +1,42 @@
 "use client";
 
 import CallsWithinDate from "@/components/calls/CallsGroupedByDate";
-import { fetchActivities } from "@/src/data/activities/activitiesSlice";
+import {
+  fetchActivities,
+  updateActivity,
+} from "@/src/data/activities/activitiesSlice";
 import { useAppDispatch, useAppSelector } from "@/src/data/hooks";
 import { getLatestCallsWithCountsGroupByDate } from "@/src/data/process_data";
 import { RootState } from "@/src/data/store";
+import { ActivityWithCounts } from "@/src/types/activity";
 import { Archive } from "lucide-react";
-import { useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useEffect, useState } from "react";
 
 const ActivityFeed = () => {
+  // const [activities, setActivities] = useState<ActivityWithCounts[]>([]);
+
   const activities = useAppSelector(
     (state: RootState) => state.activities.activities
   );
+
+  const [activitiesGroupByDate, setActivitiesGroupByDate] = useState<
+    [string, ActivityWithCounts[]][]
+  >([]);
+
   const status = useAppSelector((state: RootState) => state.activities.status);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
     dispatch(fetchActivities());
   }, [dispatch]);
+
+  useEffect(() => {
+    const groupedByDate = getLatestCallsWithCountsGroupByDate(
+      activities,
+      false
+    );
+    setActivitiesGroupByDate(groupedByDate);
+  }, [activities]);
 
   if (status === "loading") {
     return <p>Loading activities...</p>;
@@ -28,10 +46,11 @@ const ActivityFeed = () => {
     return <p>Failed to load activities.</p>;
   }
 
-  const callsGroupByDate = getLatestCallsWithCountsGroupByDate(
-    activities,
-    false
-  );
+  function onArchiveAll(): void {
+    for (const activity of activities) {
+      dispatch(updateActivity({ activity, is_archived: true }));
+    }
+  }
 
   return (
     <div className="mx-auto shadow rounded-lg">
@@ -39,17 +58,20 @@ const ActivityFeed = () => {
         className="flex justify-items-start items-center mb-4
         space-x-4"
       >
-        <Archive size={24} className="text-gray-500" />
-        <button className="font-semibold text-gray-700">
-          Archive all calls
+        <button
+          onClick={() => onArchiveAll()}
+          className="flex space-x-3 font-semibold text-gray-700"
+        >
+          <Archive size={24} className="text-gray-500" />
+          <div>Archive all calls</div>
         </button>
       </header>
       <div className="space-y-4">
-        {callsGroupByDate.map((callsWithinDate) => (
+        {activitiesGroupByDate.map((activitiesWithinDate) => (
           <CallsWithinDate
-            key={callsWithinDate[0]}
-            callsWithinDate={callsWithinDate[1]}
-            date={callsWithinDate[0]}
+            key={activitiesWithinDate[0]}
+            callsWithinDate={activitiesWithinDate[1]}
+            date={activitiesWithinDate[0]}
           />
         ))}
       </div>
